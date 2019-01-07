@@ -132,7 +132,6 @@ def status_view(request):
 
     ongoing_d = []
     failed_d = []
-    members_d = []
 
     startOfYear = datetime(2019, 1, 1, 23, 59, 59, 999)
 
@@ -155,18 +154,15 @@ def status_view(request):
     if (len(days) > 0):
         ongoing_d.append(ongoing_daily[0])
         failed_d.append(failed_daily[0])
-        members_d.append(members_daily[0])
         for i in range(1, len(days)):
             ongoing_d.append(ongoing_daily[i] - ongoing_daily[i-1])
             failed_d.append(failed_daily[i] - failed_daily[i-1])
-            members_d.append(members_daily[i] - members_daily[i-1])
 
     context['ongoing_day_c'] = ongoing_daily
     context['failed_day_c'] = failed_daily
     context['total_members_c'] = members_daily
     context['ongoing_d'] = ongoing_d
     context['failed_d'] = failed_d
-    context['members_d'] = members_d
     context['days'] = days
 
     dayssince = datetime.now() - datetime(2019, 1, 1)

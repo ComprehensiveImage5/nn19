@@ -159,12 +159,6 @@ var myDailyChart = new Chart("dailychart", {
             backgroundColor: 'rgba(0, 255, 0, 0.4)',
             borderColor: 'rgba(0, 255, 0, 1)',
             borderWidth: 1
-        }, {
-            label: 'Total soldiers',
-            data: [{% for o in members_d %}{{ o }},{% endfor %}],
-            backgroundColor: 'rgba(0, 0, 255, 0.4)',
-            borderColor: 'rgba(0, 0, 255, 1)',
-            borderWidth: 1
         }]
     },
     options: {
