@@ -36,6 +36,10 @@
 <canvas class="mb-4 mb-sm-3" id="progresschart" width="300px"></canvas>
 
 <h3>Chart Data</h3>
+<h5>Daily chart (New per day)</h5>
+<canvas class="mb-4 mb-sm-3" id="dailychart" width="100%"></canvas>
+
+<h5>Accumulation chart (Total from the beginning)</h5>
 <canvas class="mb-4 mb-sm-3" id="newchart" width="100%"></canvas>
 
 <h3>Soldier Statistics</h3>
@@ -59,6 +63,8 @@
 </table>
 
 <canvas class="mb-4 mb-sm-3" id="percentchart" width="300px"></canvas>
+
+
 
 <h3>Newly enlisted soldiers</h3>
 <h5>Newly enlisted today</h5>
@@ -107,20 +113,55 @@ var myChart = new Chart("newchart", {
     data: {
         labels: [{% for d in days %}'{{ d }}',{% endfor %}],
         datasets: [{
-            label: 'Fighting',
-            data: [{% for o in ongoing_day_c %}{{ o }},{% endfor %}],
-            backgroundColor: 'rgba(0, 255, 0, 0.4)',
-            borderColor: 'rgba(0, 255, 0, 1)',
-            borderWidth: 1
-        }, {
             label: 'Fallen',
             data: [{% for o in failed_day_c %}{{ o }},{% endfor %}],
             backgroundColor: 'rgba(255, 0, 0, 0.4)',
             borderColor: 'rgba(255, 0, 0, 1)',
             borderWidth: 1
         }, {
+            label: 'Fighting',
+            data: [{% for o in ongoing_day_c %}{{ o }},{% endfor %}],
+            backgroundColor: 'rgba(0, 255, 0, 0.4)',
+            borderColor: 'rgba(0, 255, 0, 1)',
+            borderWidth: 1
+        }, {
             label: 'Total soldiers',
             data: [{% for o in total_members_c %}{{ o }},{% endfor %}],
+            backgroundColor: 'rgba(0, 0, 255, 0.4)',
+            borderColor: 'rgba(0, 0, 255, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+});
+
+var myDailyChart = new Chart("dailychart", {
+    type: 'line',
+    data: {
+        labels: [{% for d in days %}'{{ d }}',{% endfor %}],
+        datasets: [{
+            label: 'Fallen',
+            data: [{% for o in failed_d %}{{ o }},{% endfor %}],
+            backgroundColor: 'rgba(255, 0, 0, 0.4)',
+            borderColor: 'rgba(255, 0, 0, 1)',
+            borderWidth: 1
+        }, {
+            label: 'Fighting',
+            data: [{% for o in ongoing_d %}{{ o }},{% endfor %}],
+            backgroundColor: 'rgba(0, 255, 0, 0.4)',
+            borderColor: 'rgba(0, 255, 0, 1)',
+            borderWidth: 1
+        }, {
+            label: 'Total soldiers',
+            data: [{% for o in members_d %}{{ o }},{% endfor %}],
             backgroundColor: 'rgba(0, 0, 255, 0.4)',
             borderColor: 'rgba(0, 0, 255, 1)',
             borderWidth: 1
