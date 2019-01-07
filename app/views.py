@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.http.response import HttpResponseRedirect
 
 from django.contrib.auth.models import User
-from .models import CheckIn
+from .models import CheckIn, Soldier
 
 from django.utils import timezone
 from datetime import timedelta, datetime
@@ -55,12 +55,12 @@ def profile_view(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/')
 
-    context = {'canpost': False, 'result': '', 'currentuser': request.user.username}
+    context = {'canpost': False, 'result': '', 'currentuser': request.user}
 
     if request.method == 'POST':
         if request.POST.get('ok') is not None:
             now = timezone.now()
-            if CheckIn.objects.filter(owner=request.user, datetime__year=now.year, datetime__month=now.month, datetime__day=now.day).count() > 0:
+            if CheckIn.objects.filter(owner=request.user, datetime__year=now.year, datetime__month=now.month, datetime__day=now.day).count() == 0:
                 context['result'] = 'You already updated today. Not saving.'
             else:
                 cin = CheckIn(owner=request.user, status='OK', datetime=now)
@@ -72,6 +72,15 @@ def profile_view(request):
             request.user.first_name = "KO"
             request.user.save()
             context['result'] = 'Update saved. Press F to pay respects.'
+        elif request.POST.get('change_rank') is not None:
+            if Soldier.objects.filter(user=request.user).count() == 0:
+                Soldier.objects.create(user=request.user)
+            request.user.soldier.rank = request.POST.get('newrank')
+            try:
+                request.user.soldier.save()
+                context['result'] = "New rank saved."
+            except:
+                context['result'] = 'Unable to set rank.'
         else:
             context['result'] = 'Didn\'t do anything.'
 

@@ -3,6 +3,7 @@
 {% block content %}
 <h1 class="mb-4 mb-sm-3">Your status</h1>
 <p class="mb-2 mb-sm-1">You are <b>{% if status.status == "OK" %} OK {% else %} Failed {% endif %}</b> (as of {{ status.datetime }})</p>
+<p class="mb-4 mb-sm-2">Your current rank is {% if currentuser.soldier.rank %}{{ currentuser.soldier.get_rank_display }}{% else %}unset. I recommend you change it :){% endif %}</p>
 {% if result %}
 <p class="alert alert-success">{{ result }}</p>
 {% endif %}
@@ -11,8 +12,32 @@
     {% csrf_token %}
     <button class="btn btn-lg btn-success" type="submit" name="ok">I'm still here!</button>
 </form>
-<form method="POST" onsubmit="return confirm('This will permanently\nchange your status to FAILED.\n(at least until I personally edit\nyour account info manually internally)\n\nAre you really sure you failed?');">
+<form method="POST" class="mb-3 mb-sm-2" onsubmit="return confirm('This will permanently\nchange your status to FAILED.\n(at least until I personally edit\nyour account info manually internally)\n\nAre you really sure you failed?');">
+    {% csrf_token %}
     <button class="btn btn-lg btn-danger" type="submit" name="fail">I failed!</button>
+</form>
+<form method="POST" class="mb-3 mb-sm-2">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="exampleFormControlSelect1">Choose rank</label>
+        <select class="form-control" id="exampleFormControlSelect1" name="newrank">
+            <option value="unset">--Unset--</option>
+            <option value="private">Private</option>
+            <option value="private_fc">Private First Class</option>
+            <option value="lance_c">Lance Corporal</option>
+            <option value="nut_c">Nut Corporal</option>
+            <option value="sergeant">Sergeant</option>
+            <option value="s_sergeant">Staff Sergeant</option>
+            <option value="n_sergeant">Nut Sergeant</option>
+            <option value="m_sergeant">Master Sergeant</option>
+            <option value="lieutenant">Lieutenant</option>
+            <option value="captain">Captain</option>
+            <option value="major">Major</option>
+            <option value="colonel">Colonel</option>
+            <option value="general">General</option>
+        </select>
+    </div>
+    <button class="btn btn-lg btn-primary" type="submit" name="change_rank">Change rank</button>
 </form>
 {% else %}
 <p class="alert alert-warning">You did your best in this battle. Good luck next time! *<i>salute</i>*</p>

@@ -13,10 +13,14 @@
     <button type="submit" class="btn btn-primary">Check</button>
 </form>
 
-{% if quser %}
-    <h3>About {{ quser }}</h3>
+{% if quser %}  
+    <h3>About <span style="color: {{ quser.soldier.get_color.0 }};">{{ quser }}</span>{% if quser.soldier.rank %}<img src="static/app/{{ quser.soldier.rank }}.png" style="height: 64px;margin-left: 20px;">{% endif %}</h3>
 
     <table class="table mb-5 mb-sm-4">
+        <tr>
+            <th>Ranking</th>
+            <td>{{ quser.soldier.get_rank_display }}</td>
+        </tr>                
         <tr>
             <th>Join date</th>
             <td>{{ quser.date_joined }}</td>
