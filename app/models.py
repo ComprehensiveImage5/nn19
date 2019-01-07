@@ -9,3 +9,6 @@ class CheckIn(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     status = models.CharField(max_length=2)
     datetime = models.DateTimeField()
+
+    def __str__(self):
+        return self.owner.username + ": " + self.status
