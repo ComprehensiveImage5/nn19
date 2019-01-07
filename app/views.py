@@ -130,7 +130,7 @@ def status_view(request):
     failed_daily = []
     members_daily = []
 
-    startOfYear = datetime(2019, 1, 1)
+    startOfYear = datetime(2019, 1, 1, 23, 59, 59, 999)
 
     now = datetime.now()
 
