@@ -89,7 +89,7 @@ def user_view(request):
             context['error'] = 'A soldier with that username was not found'
         else:
             context['quser'] = users[0]
-            context['status'] = users[0].checkin_set.all().order_by('-datetime')[0]
+            context['status'] = users[0].checkin_set.all().order_by('-datetime')
             date_diff = timezone.now() - users[0].date_joined
             context['days_since_registration_days'] = date_diff.days
             context['days_since_registration_hours'] = date_diff.seconds/3600.0

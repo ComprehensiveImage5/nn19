@@ -16,19 +16,29 @@
 {% if quser %}
     <h3>About {{ quser }}</h3>
 
-    <table class="table">
+    <table class="table mb-5 mb-sm-4">
         <tr>
             <th>Join date</th>
             <td>{{ quser.date_joined }}</td>
         </tr>
         <tr>
             <th>Status</th>
-            <td>{% if status.status == "OK" %} OK {% else %} Failed {% endif %}</b> (as of {{ status.datetime }})</td>
+            <td>{% if status.0.status == "OK" %} OK {% else %} Failed {% endif %} (as of {{ status.0.datetime }})</td>
         </tr>
         <tr>
             <th>Days since registration</th>
             <td>{{ days_since_registration_days }} day{% if days_since_registration_days > 1%}s{% endif %}, {{ days_since_registration_hours }} hour{% if days_since_registration_hours > 1 %}s{% endif %}</td>
         </tr>
+    </table>
+
+    <h3>Check-In History</h3>
+    <table class="table mb-5 mb-sm-4">
+        {% for s in status %}
+        <tr>
+            <th>{{ s.datetime }}</th>
+            <td>{% if s.status == "OK" %} OK {% else %} Failed {% endif %}</td>
+        </tr>
+        {% endfor %}
     </table>
 {% else %}
     <p class="alert alert-primary">Enter the username of the person you want to check.</p>
