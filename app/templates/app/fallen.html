@@ -1,0 +1,28 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+<h1 class="mb-4 mb-sm-3">NN19 Statistics</h1>
+
+<ul class="nav nav-tabs mb-4 mb-sm-3">
+    <li class="nav-item">
+        <a class="nav-link" href="/status">General</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/fighting">Fighting</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" href="/fallen">Fallen</a>
+    </li>
+</ul>
+
+<h3>Fallen Soldiers</h3>
+{% if users %}
+<ul class="list-group">
+    {% for n in users %}
+    <a href="/soldier?username={{ n.username|urlencode }}" class="list-group-item list-group-item-action">{{ n.username }}</a>
+    {% endfor %}
+</ul>
+{% else %}
+<p class="alert alert-success">No fallen soldiers yet! Keep on fighting!</p>
+{% endif %}
+{% endblock %}

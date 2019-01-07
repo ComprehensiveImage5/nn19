@@ -1,0 +1,20 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+<h1 class="mb-4 mb-sm-3">Your status</h1>
+<p class="mb-2 mb-sm-1">You are <b>{% if status.status == "OK" %} OK {% else %} Failed {% endif %}</b> (as of {{ status.datetime }})</p>
+{% if result %}
+<p class="alert alert-success">{{ result }}</p>
+{% endif %}
+{% if canpost %}
+<form method="POST" class="mb-3 mb-sm-2">
+    {% csrf_token %}
+    <button class="btn btn-lg btn-success" type="submit" name="ok">I'm still here!</button>
+</form>
+<form method="POST" onsubmit="return confirm('This will permanently\nchange your status to FAILED.\n(at least until I personally edit\nyour account info manually internally)\n\nAre you really sure you failed?');">
+    <button class="btn btn-lg btn-danger" type="submit" name="fail">I failed!</button>
+</form>
+{% else %}
+<p class="alert alert-warning">You did your best in this battle. Good luck next time! *<i>salute</i>*</p>
+{% endif %}
+{% endblock %}

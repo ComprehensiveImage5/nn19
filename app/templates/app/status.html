@@ -1,0 +1,155 @@
+{% extends 'app/base.html' %}
+
+{% block extrahead %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js" integrity="sha256-MZo5XY1Ah7Z2Aui4/alkfeiq3CopMdV/bbkc/Sh41+s=" crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block content %}
+<h1 class="mb-4 mb-sm-3">NN19 Statistics</h1>
+
+<ul class="nav nav-tabs mb-4 mb-sm-3">
+    <li class="nav-item">
+        <a class="nav-link active" href="/status">General</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/fighting">Fighting</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/fallen">Fallen</a>
+    </li>
+</ul>
+
+<h3>Progress</h3>
+<table class="table mb-5 mb-sm-4">
+    <tr>
+        <th>Current UTC (server reference) time:</th>
+        <td>{{ servertime }}</td>
+    </tr>
+    <tr>
+        <th>Days since January 1, 2019:</th>
+        <td>{{ dayssince }} day{% if dayssince > 1 %}s{% endif %} and {{ dayssince_hours }} hour{% if dayssince_hours > 1 %}s{% endif %} ({{ dayspercent }}%)</td>
+    </tr>
+    <tr>
+        <th>Days until January 1, 2020:</th>
+        <td>{{ daysuntil }} day{% if daysuntil > 1 %}s{% endif %} and {{ daysuntil_hours }} hour{% if daysuntil_hours > 1 %}s{% endif %} ({{ dayspercent_remaining }}%)</td>    </tr>
+</table>
+<canvas class="mb-4 mb-sm-3" id="progresschart" width="300px"></canvas>
+
+<h3>Chart Data</h3>
+<canvas class="mb-4 mb-sm-3" id="newchart" width="100%"></canvas>
+
+<h3>Soldier Statistics</h3>
+<table class="table mb-5 mb-sm-4">
+    <tr>
+        <th>Total enlisted soldiers:</th>
+        <td>{{ registered }}</td>
+    </tr>
+    <tr>
+        <th>Total fighting soldiers:</th>
+        <td>{{ ongoing }} ({{ ongoing_percent }}%)</td>
+    </tr>
+    <tr>
+        <th>Total fallen soldiers:</th>
+        <td>{{ failed }} ({{ failed_percent }}%)</td>
+    </tr>
+    <tr>
+        <th>Total NN19 successful soldiers:</th>
+        <td>{{ success }} ({{ success_percent }}%)</td>
+    </tr>
+</table>
+
+<canvas class="mb-4 mb-sm-3" id="percentchart" width="300px"></canvas>
+
+<h3>Newly enlisted soldiers</h3>
+<h5>Newly enlisted today</h5>
+{% if newregister %}
+<ul class="list-group">
+    {% for n in newregister %}
+    <a href="/soldier?username={{ n.username|urlencode }}" class="list-group-item list-group-item-action">{{ n.username }}</a>
+    {% endfor %}
+</ul>
+{% else %}
+<p class="alert alert-info">No new soldiers today.</p>
+{% endif %}
+
+<h5 class="mt-5 mt-sm-4">New fallen soldiers today</h5>
+{% if newfail %}
+<ul class="list-group">
+    {% for n in newfail %}
+    <a href="/soldier?username={{ n.username|urlencode }}" class="list-group-item list-group-item-action">{{ n.username }}</a>
+    {% endfor %}
+</ul>
+{% else %}
+<p class="alert alert-info">No fallen soldiers today! Good job!</p>
+{% endif %}
+</p>
+{% endblock %}
+
+{% block extrabody %}
+<script>
+var myPieChart2 = new Chart('progresschart', {
+    type: 'doughnut',
+    data: {
+        datasets: [{
+            data: [ {{ dayssince }}, {{ daysuntil }} ],
+            backgroundColor: ['rgba(0, 255, 0, 0.4)', 'rgba(255, 0, 0, 0.4)'],
+            borderColor: ['rgba(0, 255, 0, 1)', 'rgba(255, 0, 0, 1)'],
+            borderWidth: 1
+        }],
+        labels: [
+            'Days passed', 'Days until'
+        ]
+    }
+});
+
+var myChart = new Chart("newchart", {
+    type: 'line',
+    data: {
+        labels: [{% for d in days %}'{{ d }}',{% endfor %}],
+        datasets: [{
+            label: 'Fighting',
+            data: [{% for o in ongoing_day_c %}{{ o }},{% endfor %}],
+            backgroundColor: 'rgba(0, 255, 0, 0.4)',
+            borderColor: 'rgba(0, 255, 0, 1)',
+            borderWidth: 1
+        }, {
+            label: 'Fallen',
+            data: [{% for o in failed_day_c %}{{ o }},{% endfor %}],
+            backgroundColor: 'rgba(255, 0, 0, 0.4)',
+            borderColor: 'rgba(255, 0, 0, 1)',
+            borderWidth: 1
+        }, {
+            label: 'Total soldiers',
+            data: [{% for o in total_members_c %}{{ o }},{% endfor %}],
+            backgroundColor: 'rgba(0, 0, 255, 0.4)',
+            borderColor: 'rgba(0, 0, 255, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+});
+
+var myPieChart = new Chart('percentchart', {
+    type: 'doughnut',
+    data: {
+        datasets: [{
+            data: [ {{ ongoing }}, {{ failed }} ],
+            backgroundColor: ['rgba(0, 255, 0, 0.4)', 'rgba(255, 0, 0, 0.4)'],
+            borderColor: ['rgba(0, 255, 0, 1)', 'rgba(255, 0, 0, 1)'],
+            borderWidth: 1
+        }],
+        labels: [
+            'Fighting', 'Fallen'
+        ]
+    }
+});
+</script>
+{% endblock %}

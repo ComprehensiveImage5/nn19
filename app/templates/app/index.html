@@ -1,0 +1,44 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+    <h1 class="mb-4 mb-sm-3">Log-in</h1>
+    {% if login_error %}
+    <p class="alert alert-danger">{{ login_error }}</p>
+    {% endif %}
+    <form class="mb-5 mb-sm-4" method="POST">
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" class="form-control" name="username" placeholder="Enter username">
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" class="form-control" name="password" placeholder="Enter password">
+        </div>
+        {% csrf_token %}
+        <button type="submit" name="login" class="btn btn-primary">Log in</button>
+    </form>
+
+    <h1 class="mb-4 mb-sm-3">Enlist</h1>
+    {% if regsitration_error %}
+    <p class="alert alert-danger">{{ registration_error }}</p>
+    {% endif %}
+    <form method="POST">
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" class="form-control" name="username" placeholder="Enter username">
+            <small class="form-text text-muted">I recommend you use your Reddit username so other users and more importantly the mods can easily check your status, but of course, it's up to you.</small>
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" class="form-control" name="password" placeholder="Enter password">
+            <small class="form-text text-muted">Don't worry. Your password is encrypted, and nobody, not even the admins, can know your password even if they wanted to.</small>
+        </div>
+        <div class="form-group">
+            <label>Password (confirm)</label>
+            <input type="password" class="form-control" name="password2" placeholder="Enter password again">
+        </div>
+        {% csrf_token %}
+        <button type="submit" name="register" class="btn btn-primary">Enlist</button>
+    </form>
+
+{% endblock %}

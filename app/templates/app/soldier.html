@@ -1,0 +1,37 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+<h1 class="mb-4 mb-sm-3">Check user status</h1>
+{% if error %}
+<p class="alert alert-danger">{{ error }}</p>
+{% endif %}
+<form class="mb-5 mb-sm-4" method="GET">
+    <div class="form-group">
+        <label>Username</label>
+        <input type="text" class="form-control" name="username" placeholder="Enter username" value="{{ request.GET.username }}">
+    </div>
+    <button type="submit" class="btn btn-primary">Check</button>
+</form>
+
+{% if quser %}
+    <h3>About {{ quser }}</h3>
+
+    <table class="table">
+        <tr>
+            <th>Join date</th>
+            <td>{{ quser.date_joined }}</td>
+        </tr>
+        <tr>
+            <th>Status</th>
+            <td>{% if status.status == "OK" %} OK {% else %} Failed {% endif %}</b> (as of {{ status.datetime }})</td>
+        </tr>
+        <tr>
+            <th>Days since registration</th>
+            <td>{{ days_since_registration_days }} day{% if days_since_registration_days > 1%}s{% endif %}, {{ days_since_registration_hours }} hour{% if days_since_registration_hours > 1 %}s{% endif %}</td>
+        </tr>
+    </table>
+{% else %}
+    <p class="alert alert-primary">Enter the username of the person you want to check.</p>
+{% endif %}
+
+{% endblock %}
