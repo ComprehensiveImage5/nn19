@@ -60,7 +60,7 @@ def profile_view(request):
     if request.method == 'POST':
         if request.POST.get('ok') is not None:
             now = timezone.now()
-            if CheckIn.objects.filter(owner=request.user, datetime__year=now.year, datetime__month=now.month, datetime__day=now.day).count() == 0:
+            if CheckIn.objects.filter(owner=request.user, datetime__year=now.year, datetime__month=now.month, datetime__day=now.day).count() > 0:
                 context['result'] = 'You already updated today. Not saving.'
             else:
                 cin = CheckIn(owner=request.user, status='OK', datetime=now)
@@ -75,12 +75,31 @@ def profile_view(request):
         elif request.POST.get('change_rank') is not None:
             if Soldier.objects.filter(user=request.user).count() == 0:
                 Soldier.objects.create(user=request.user)
-            request.user.soldier.rank = request.POST.get('newrank')
-            try:
-                request.user.soldier.save()
-                context['result'] = "New rank saved."
-            except:
-                context['result'] = 'Unable to set rank.'
+            rank = request.POST.get('newrank')
+            now = timezone.now()
+            if  (rank in ('unset', 'private', 'private_fc', 'lance_c')) or \
+                    (now.month==2 and rank in ('nut_c')) or \
+                    (now.month==3 and rank in ('nut_c', 'sergeant')) or \
+                    (now.month==4 and rank in ('nut_c', 'sergeant', 's_sergeant')) or \
+                    (now.month==5 and rank in ('nut_c', 'sergeant', 's_sergeant', 'n_sergeant')) or \
+                    (now.month==6 and rank in ('nut_c', 'sergeant', 's_sergeant', 'n_sergeant', 'm_sergeant')) or \
+                    (now.month==7 and rank in \
+                        ('nut_c', 'sergeant', 's_sergeant', 'n_sergeant', 'm_sergeant', 'lieutenant')) or \
+                    (now.month==8 and rank in \
+                        ('nut_c', 'sergeant', 's_sergeant', 'n_sergeant', 'm_sergeant', 'lieutenant', 'captain')) or \
+                    (now.month==9 and rank in \
+                        ('nut_c', 'sergeant', 's_sergeant', 'n_sergeant', 'm_sergeant', 'lieutenant', 'captain', 'major')) or \
+                    ((now.month==10 or now.month==11) and rank in \
+                        ('nut_c', 'sergeant', 's_sergeant', 'n_sergeant', 'm_sergeant', 'lieutenant', 'captain', 'major', 'colonel')) or \
+                    ((now.year==2020 and rank == 'general')):
+                request.user.soldier.rank = request.POST.get('newrank')
+                try:
+                    request.user.soldier.save()
+                    context['result'] = "New rank saved."
+                except:
+                    context['result'] = 'Unable to set rank.'
+            else:
+                context['result'] = "You can't choose that rank yet."
         else:
             context['result'] = 'Didn\'t do anything.'
 
@@ -130,7 +149,7 @@ def status_view(request):
     now = timezone.now()
     yesterday = now - timedelta(days=1)
     context['newregister'] = User.objects.filter(date_joined__gte=yesterday).order_by('-date_joined')
-    context['newfail'] = User.objects.filter(first_name="KO", date_joined__gte=yesterday).order_by('-date_joined')
+    context['newfail'] = CheckIn.objects.filter(status="KO", datetime__gte=yesterday).order_by('-datetime')
     context['newgoing'] = User.objects.filter(first_name="OK", date_joined__gte=yesterday).order_by('-date_joined')
 
     days = []
@@ -200,7 +219,7 @@ def logout_view(request):
     return HttpResponseRedirect('/')
 
 def fallen_view(request):
-    return render(request, 'app/fallen.html', {'users': User.objects.filter(first_name='KO')})
+    return render(request, 'app/fallen.html', {'users': User.objects.filter(first_name='KO').order_by('username')})
 
 def fighting_view(request):
-    return render(request, 'app/fighting.html', {'users': User.objects.exclude(first_name='KO')})
+    return render(request, 'app/fighting.html', {'users': User.objects.exclude(first_name='KO').order_by('username')})

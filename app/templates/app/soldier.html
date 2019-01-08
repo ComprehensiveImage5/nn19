@@ -18,8 +18,8 @@
 
     <table class="table mb-5 mb-sm-4">
         <tr>
-            <th>Ranking</th>
-            <td>{{ quser.soldier.get_rank_display }}</td>
+            <th>Rank</th>
+            <td>{% if currentuser.soldier.rank %}{{ currentuser.soldier.get_rank_display }}{% else %}Unset{% endif %}</td>
         </tr>                
         <tr>
             <th>Join date</th>

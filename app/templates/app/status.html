@@ -82,7 +82,7 @@
 {% if newfail %}
 <ul class="list-group">
     {% for n in newfail %}
-    <a href="/soldier?username={{ n.username|urlencode }}" class="list-group-item list-group-item-action">{{ n.username }}</a>
+    <a href="/soldier?username={{ n.owner.username|urlencode }}" class="list-group-item list-group-item-action">{{ n.owner.username }}</a>
     {% endfor %}
 </ul>
 {% else %}
